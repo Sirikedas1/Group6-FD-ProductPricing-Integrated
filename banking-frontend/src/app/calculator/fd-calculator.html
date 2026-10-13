@@ -1,0 +1,254 @@
+<div class="container">
+  <div class="page-header">
+    <h1>FD Calculator</h1>
+    <p>Estimate the maturity amount of a Fixed Deposit using simple or compound interest.</p>
+  </div>
+
+  @if (loadingSetup()) {
+    <p class="muted">Loading categories...</p>
+  }
+
+  @if (setupErrors().length > 0) {
+    <div class="error-box">
+      <strong>Could not load the calculator settings.</strong>
+      <ul>
+        @for (e of setupErrors(); track e) {
+          <li>{{ e }}</li>
+        }
+      </ul>
+      <button type="button" class="btn btn-secondary" (click)="loadSetup()">Try again</button>
+    </div>
+  }
+
+  <div class="layout">
+    <!-- ================= LEFT: THE FORM ================= -->
+    <form class="card" (ngSubmit)="calculate()" novalidate>
+      <h2 class="card-title">Deposit details</h2>
+
+      @if (rateSource() === 'PRODUCT') {
+        <label class="field">
+          <span class="label">FD product</span>
+          <select name="productCode" [(ngModel)]="model.productCode" (ngModelChange)="onProductChange()">
+            <option value="">-- Choose a product --</option>
+            @for (p of products(); track p.code) {
+              <option [value]="p.code">{{ p.name }} ({{ p.code }})</option>
+            }
+          </select>
+        </label>
+      }
+
+      <label class="field">
+        <span class="label">Deposit amount (₹)</span>
+        <input type="number" name="principal" [(ngModel)]="model.principal"
+               min="1000" step="0.01" placeholder="e.g. 100000" />
+      </label>
+
+      <div class="row">
+        <label class="field">
+          <span class="label">Term</span>
+          <input type="number" name="termValue" [(ngModel)]="model.termValue" min="1" step="1" />
+        </label>
+        <label class="field">
+          <span class="label">Term unit</span>
+          <select name="termUnit" [(ngModel)]="model.termUnit">
+            <option value="DAYS">Days</option>
+            <option value="MONTHS">Months</option>
+            <option value="YEARS">Years</option>
+          </select>
+        </label>
+      </div>
+      <p class="hint">{{ termHint() }}</p>
+
+      @if (rateSource() === 'LOCAL') {
+        <label class="field">
+          <span class="label">Base interest rate (% per year)</span>
+          <input type="number" name="baseRate" [(ngModel)]="model.baseRate"
+                 min="0.01" max="15" step="0.01" placeholder="e.g. 6.5" />
+        </label>
+      } @else {
+        <p class="hint">The base rate comes from the selected product.</p>
+      }
+
+      <div class="field">
+        <span class="label">Interest type</span>
+        <div class="radios">
+          <label class="radio">
+            <input type="radio" name="interestType" value="SIMPLE" [(ngModel)]="model.interestType" />
+            Simple
+          </label>
+          <label class="radio">
+            <input type="radio" name="interestType" value="COMPOUND" [(ngModel)]="model.interestType" />
+            Compound
+          </label>
+        </div>
+      </div>
+
+      @if (model.interestType === 'COMPOUND') {
+        <label class="field">
+          <span class="label">Compounding frequency</span>
+          <select name="compoundingFrequency" [(ngModel)]="model.compoundingFrequency">
+            <option value="MONTHLY">Monthly</option>
+            <option value="QUARTERLY">Quarterly</option>
+            <option value="HALF_YEARLY">Half-yearly</option>
+            <option value="ANNUALLY">Annually</option>
+          </select>
+        </label>
+      }
+
+      <!-- ---------- Customer categories (Lab L6 section 4) ---------- -->
+      <div class="field">
+        <span class="label">Customer category</span>
+        @if (categorySource() === 'PROFILE') {
+          <p class="hint profile-hint">Taken automatically from your customer profile:</p>
+          <div>
+            @for (code of myCategories(); track code) {
+              <span class="chip">{{ nameOf(code) }} {{ addOnLabel(addOnOf(code)) }}</span>
+            }
+          </div>
+        } @else {
+          <details class="dropdown">
+            <summary>{{ selectionSummary() }}</summary>
+            <div class="dropdown-panel">
+              @for (c of categories(); track c.code) {
+                <label class="check">
+                  <input type="checkbox" [checked]="isSelected(c.code)" (change)="toggleCategory(c.code)" />
+                  <span class="check-name">{{ c.name }}</span>
+                  <span class="check-addon">{{ addOnLabel(c.additionalRatePercent) }}</span>
+                </label>
+              }
+            </div>
+          </details>
+        }
+      </div>
+
+      <!-- ---------- Cap preview (enforced before submission) ---------- -->
+      <div class="cap-box" [class.cap-exceeded]="capExceeded()">
+        <div>Selected add-ons: <strong>+{{ requestedAddOn().toFixed(2) }}%</strong></div>
+        <div>Maximum combined add-on allowed: <strong>+{{ addOnCap().toFixed(2) }}%</strong></div>
+        @if (capExceeded()) {
+          <div class="cap-warning">
+            Your add-ons exceed the cap, so only +{{ appliedAddOn().toFixed(2) }}% will be applied.
+          </div>
+        }
+        @if (previewRate() !== null) {
+          <div>Estimated effective rate: <strong>{{ pct(previewRate()) }}</strong></div>
+        }
+      </div>
+
+      @if (errors().length > 0) {
+        <div class="error-box">
+          <strong>Please fix the following:</strong>
+          <ul>
+            @for (e of errors(); track e) {
+              <li>{{ e }}</li>
+            }
+          </ul>
+        </div>
+      }
+
+      <div class="actions">
+        <button type="submit" class="btn btn-primary" [disabled]="calculating()">
+          {{ calculating() ? 'Calculating...' : 'Calculate' }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="reset()">Reset</button>
+      </div>
+    </form>
+
+    <!-- ================= RIGHT: THE RESULT ================= -->
+    @if (result(); as r) {
+      <section class="card result">
+        <h2 class="card-title">Result</h2>
+
+        <div class="maturity">
+          <span>Maturity amount</span>
+          <strong>{{ inr(r.maturityAmount) }}</strong>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <span>Interest earned</span>
+            <strong>{{ inr(r.interestEarned) }}</strong>
+          </div>
+          <div class="stat">
+            <span>Effective rate</span>
+            <strong>{{ pct(r.effectiveRate) }}</strong>
+          </div>
+          @if (r.apy !== null) {
+            <div class="stat">
+              <span>Annual yield (APY)</span>
+              <strong>{{ pct(r.apy) }}</strong>
+            </div>
+          }
+        </div>
+
+        @if (r.capApplied) {
+          <p class="notice">
+            Your category add-ons total +{{ pct(r.requestedAddOn) }}, but the maximum allowed is
+            +{{ pct(r.addOnCap) }}, so +{{ pct(r.appliedAddOn) }} was applied.
+          </p>
+        }
+        @if (r.maxRateCapApplied) {
+          <p class="notice">
+            The rate was limited to the product's maximum rate of {{ pct(r.maxEffectiveRate) }}.
+          </p>
+        }
+
+        <table class="breakdown">
+          <tbody>
+            <tr><th>Deposit amount</th><td>{{ inr(r.principal) }}</td></tr>
+            <tr><th>Term</th><td>{{ termText(r) }}</td></tr>
+            <tr>
+              <th>Interest method</th>
+              <td>
+                {{ r.interestType === 'SIMPLE' ? 'Simple interest' : 'Compound interest' }}
+                @if (r.compoundingFrequency) {
+                  ({{ r.compoundingFrequency.toLowerCase().replace('_', '-') }})
+                }
+              </td>
+            </tr>
+            <tr><th>Base rate</th><td>{{ pct(r.baseRate) }}</td></tr>
+            <tr>
+              <th>Categories</th>
+              <td>
+                @for (code of r.categories; track code) {
+                  <span class="chip">{{ nameOf(code) }} +{{ pct(r.categoryAddOns[code]) }}</span>
+                } @empty {
+                  <span class="muted">None</span>
+                }
+              </td>
+            </tr>
+            <tr><th>Add-on applied</th><td>+{{ pct(r.appliedAddOn) }}</td></tr>
+            <tr><th>Effective rate</th><td>{{ pct(r.effectiveRate) }}</td></tr>
+            <tr><th>Start date</th><td>{{ r.startDate | date: 'dd MMM yyyy' }}</td></tr>
+            <tr><th>Maturity date</th><td>{{ r.maturityDate | date: 'dd MMM yyyy' }}</td></tr>
+            <tr><th>Rate source</th><td>{{ r.rateSource }}</td></tr>
+          </tbody>
+        </table>
+
+        <div class="actions">
+          <button type="button" class="btn btn-teal" (click)="addToReport()" [disabled]="reportBusy()">
+            {{ reportBusy() ? 'Adding...' : 'Add to report (CSV)' }}
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="downloadReport()">
+            Download my report
+          </button>
+        </div>
+        @if (reportMessage()) {
+          <p class="success-box">{{ reportMessage() }}</p>
+        }
+        @if (reportError()) {
+          <p class="error-box">{{ reportError() }}</p>
+        }
+      </section>
+    } @else {
+      <section class="card placeholder">
+        <h2 class="card-title">Result</h2>
+        <p class="muted">Enter the deposit details and click <strong>Calculate</strong>.</p>
+        <p class="muted small">
+          Simple interest: M = P + (P × r × t / 100)<br />
+          Compound interest: M = P × (1 + r/n)<sup>n×t</sup>
+        </p>
+      </section>
+    }
+  </div>
+</div>

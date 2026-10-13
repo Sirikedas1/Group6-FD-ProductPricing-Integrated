@@ -1,0 +1,36 @@
+<div class="container">
+  <div class="page-header">
+    <h1>Welcome to BankLab</h1>
+    <p>Banking Technology Lab (CSF 3142) - integrated banking application.</p>
+  </div>
+
+  @if (denied) {
+    <div class="error-box">
+      Access denied. The FD Calculator is only available to customers (CUSTOMER role).
+    </div>
+  }
+
+  <div class="modules">
+    <a class="card module" routerLink="/fd-calculator">
+      <span class="module-tag">Group 6</span>
+      <h2>FD Calculator</h2>
+      <p>Estimate your Fixed Deposit maturity amount with simple or compound interest and
+        category benefits.</p>
+      <span class="module-link">Open calculator →</span>
+    </a>
+
+    <div class="card module disabled">
+      <span class="module-tag">Group 6</span>
+      <h2>Product &amp; Pricing</h2>
+      <p>FD products, rate matrix and fees - built by the product-service team.</p>
+      <span class="muted">Joins this app when ready</span>
+    </div>
+
+    <div class="card module disabled">
+      <span class="module-tag">Group 2</span>
+      <h2>FD Accounts</h2>
+      <p>Open and manage Fixed Deposit accounts - built by the FD module team.</p>
+      <span class="muted">Joins this app when ready</span>
+    </div>
+  </div>
+</div>

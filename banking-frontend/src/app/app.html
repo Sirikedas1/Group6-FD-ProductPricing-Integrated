@@ -1,0 +1,31 @@
+<header class="navbar">
+  <div class="navbar-inner">
+    <a routerLink="/" class="brand">
+      <span class="brand-logo">₹</span>
+      <span>BankLab</span>
+    </a>
+    <nav class="nav-links">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+      @if (auth.user()?.role === 'CUSTOMER') {
+        <a routerLink="/fd-calculator" routerLinkActive="active">FD Calculator</a>
+      }
+    </nav>
+    <div class="user-area">
+      @if (auth.user(); as u) {
+        <span>{{ u.username }}</span>
+        <span class="role">{{ u.role }}</span>
+        <button type="button" class="nav-button" (click)="logout()">Log out</button>
+      } @else {
+        <a routerLink="/login" class="nav-button">Log in</a>
+      }
+    </div>
+  </div>
+</header>
+
+<main>
+  <router-outlet />
+</main>
+
+<footer class="footer">
+  Banking Technology Lab (CSF 3142) · Group 6 · FD Calculator Module
+</footer>

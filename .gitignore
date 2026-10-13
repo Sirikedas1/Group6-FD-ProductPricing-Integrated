@@ -1,0 +1,17 @@
+# Local secrets (MySQL password, JWT secret) - never share or commit.
+# The *.example template IS shared.
+local-config/*
+!local-config/*.example
+
+# Generated build output and downloaded libraries
+target/
+node_modules/
+dist/
+.angular/
+
+# Lab L11 CSV reports (generated per user)
+reports/
+
+# Backup copies made during configuration changes
+*.before-mysql
+*.local-backup

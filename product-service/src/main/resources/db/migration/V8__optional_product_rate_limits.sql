@@ -1,0 +1,2 @@
+ALTER TABLE products MODIFY min_rate DECIMAL(9,6) NULL;
+ALTER TABLE products MODIFY max_rate DECIMAL(9,6) NULL;

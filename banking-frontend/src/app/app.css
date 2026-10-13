@@ -1,0 +1,93 @@
+.navbar {
+  background: var(--navy);
+  color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+
+.navbar-inner {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.brand-logo {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--teal);
+}
+
+.nav-links {
+  display: flex;
+  gap: 6px;
+  flex: 1;
+}
+
+.nav-links a {
+  color: #dbe3f3;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.user-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.user-area .role {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.nav-button {
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--navy);
+  background: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+main {
+  min-height: calc(100vh - 110px);
+}
+
+.footer {
+  text-align: center;
+  padding: 16px;
+  font-size: 13px;
+  color: var(--muted);
+}

@@ -1,0 +1,4 @@
+# Store every file exactly as it is (no line-ending conversion), so the
+# SHA-256 values in PACKAGE_MANIFEST.txt stay valid after "git clone" and
+# "python integration\check_package.py" reports COMPLETE.
+* -text

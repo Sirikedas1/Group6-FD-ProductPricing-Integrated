@@ -1,0 +1,23 @@
+{
+  "info": {
+    "name": "Product Service - First Submission",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {"key": "baseUrl", "value": "http://localhost:8083"},
+    {"key": "token", "value": ""},
+    {"key": "productCode", "value": "FDDEMO1"},
+    {"key": "roleId", "value": "ROLEDEMO1"}
+  ],
+  "item": [
+    {"name": "Create product", "request": {"method": "POST", "header": [{"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "Content-Type", "value": "application/json"}], "url": "{{baseUrl}}/products", "body": {"mode": "raw", "raw": "{\n  \"PRODUCT_CODE\": \"FDDEMO1\",\n  \"PRODUCT_ID\": \"DEMO1001\",\n  \"PRODUCT_NAME\": \"Fixed Deposit - Standard\",\n  \"PRODUCT_TYPE\": \"FD\",\n  \"CURRENCY\": \"INR\",\n  \"MIN_AMOUNT\": 1000.00,\n  \"MAX_AMOUNT\": 10000000.00,\n  \"MIN_AGE\": 18,\n  \"MIN_RATE\": 5.000000,\n  \"MAX_RATE\": 7.500000,\n  \"DEFAULT_COMPOUNDING_FREQUENCY\": \"MONTHLY\",\n  \"DEFAULT_PAYOUT_FREQUENCY\": \"MATURITY\",\n  \"SUPPORTED_FREQUENCIES\": \"MONTHLY,QUARTERLY,MATURITY\",\n  \"DEFAULT_MATURITY_INSTRUCTION\": \"RENEW_PRINCIPAL\",\n  \"TDS_RATE\": 10.000000,\n  \"TDS_EXEMPTION_THRESHOLD\": 40000.00,\n  \"EFFECTIVE_DATE\": \"2026-08-01\",\n  \"STATUS\": \"DRAFT\"\n}"}}},
+    {"name": "Get product", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{token}}"}], "url": "{{baseUrl}}/products/{{productCode}}"}},
+    {"name": "List products", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{token}}"}], "url": "{{baseUrl}}/products?limit=20&offset=0&PRODUCT_TYPE=FD&STATUS=DRAFT&sortBy=PRODUCT_CODE&sortDir=ASC"}},
+    {"name": "Create product role", "request": {"method": "POST", "header": [{"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "Content-Type", "value": "application/json"}], "url": "{{baseUrl}}/api/product-role", "body": {"mode": "raw", "raw": "{\"ROLE_ID\":\"ROLEDEMO1\",\"PRODUCT_CODE\":\"FDDEMO1\",\"ROLE_TYPE\":\"OWNER\",\"IS_MANDATORY\":true}"}}},
+    {"name": "Create product rate", "request": {"method": "POST", "header": [{"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "Content-Type", "value": "application/json"}], "url": "{{baseUrl}}/api/product-rate", "body": {"mode": "raw", "raw": "{\"RATE_ID\":\"RATEDEMO1\",\"PRODUCT_CODE\":\"FDDEMO1\",\"MIN_TENURE_MONTHS\":12,\"MAX_TENURE_MONTHS\":36,\"MIN_AMOUNT\":1000,\"MAX_AMOUNT\":10000000,\"BASE_RATE\":6.5,\"ADDITIONAL_RATE_PERCENT\":0.5,\"EFFECTIVE_DATE\":\"2026-08-01\"}"}}},
+    {"name": "Create product fee", "request": {"method": "POST", "header": [{"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "Content-Type", "value": "application/json"}], "url": "{{baseUrl}}/api/product-fee", "body": {"mode": "raw", "raw": "{\"FEE_RATE_ID\":\"FEEDEMO1\",\"PRODUCT_CODE\":\"FDDEMO1\",\"FEE_TYPE\":\"PENALTY\",\"FEE_NAME\":\"Premature withdrawal\",\"FEE_PERCENT\":1.0,\"TRIGGER_EVENT\":\"PREMATURE_WITHDRAWAL\",\"EFFECTIVE_DATE\":\"2026-08-01\"}"}}},
+    {"name": "Activate product", "request": {"method": "PATCH", "header": [{"key": "Authorization", "value": "Bearer {{token}}"}], "url": "{{baseUrl}}/products/{{productCode}}/status?STATUS=ACTIVE"}},
+    {"name": "Quote product pricing", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{token}}"}], "url": "{{baseUrl}}/products/{{productCode}}/pricing?AMOUNT=10000&TENURE_MONTHS=12"}},
+    {"name": "Status history", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{token}}"}], "url": "{{baseUrl}}/products/{{productCode}}/status-history"}}
+  ]
+}

@@ -1,0 +1,6 @@
+target
+dist
+.git
+.idea
+*.iml
+README.md

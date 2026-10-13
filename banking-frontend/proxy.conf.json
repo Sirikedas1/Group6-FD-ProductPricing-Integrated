@@ -1,0 +1,17 @@
+{
+  "/api/fd": {
+    "target": "http://localhost:8082",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/api/calculator": {
+    "target": "http://localhost:8082",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/api/auth": {
+    "target": "http://localhost:8082",
+    "secure": false,
+    "changeOrigin": true
+  }
+}

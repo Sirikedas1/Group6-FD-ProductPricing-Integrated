@@ -1,0 +1,33 @@
+<div class="container">
+  <form class="card login-card" (ngSubmit)="submit()" novalidate>
+    <h1 class="card-title">Log in to BankLab</h1>
+
+    @if (expired) {
+      <p class="notice">Your session has expired. Please log in again.</p>
+    }
+
+    <label class="field">
+      <span class="label">Username</span>
+      <input type="text" name="username" [(ngModel)]="username" autocomplete="username" />
+    </label>
+
+    <label class="field">
+      <span class="label">Password</span>
+      <div class="password-row">
+        <input [type]="showPassword ? 'text' : 'password'" name="password" [(ngModel)]="password"
+               autocomplete="current-password" />
+        <button type="button" class="btn btn-secondary" (click)="showPassword = !showPassword">
+          {{ showPassword ? 'Hide' : 'Show' }}
+        </button>
+      </div>
+    </label>
+
+    @if (error()) {
+      <p class="error-box">{{ error() }}</p>
+    }
+
+    <button type="submit" class="btn btn-primary full" [disabled]="busy()">
+      {{ busy() ? 'Logging in...' : 'Log in' }}
+    </button>
+  </form>
+</div>
